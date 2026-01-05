@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+
+        {
+            "name": "Run AI Assistant",
+            "type": "python ",
+            "request": "launch",
+            "program": "${workspaceFolder}/my_ai_assistant/main.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "cwd": "${workspaceFolder}/my_ai_assistant"
+        }
+    ]
+}

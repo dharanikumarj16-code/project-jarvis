@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "description": "Test task for debug logging",
+    "completed": false,
+    "created_at": "2026-01-02T19:33:47.172625",
+    "priority": "medium"
+  }
+]

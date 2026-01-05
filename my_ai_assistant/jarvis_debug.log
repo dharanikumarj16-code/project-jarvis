@@ -1,0 +1,21 @@
+2026-01-02 19:33:47 - INFO - Debug system initialization test
+2026-01-02 19:33:47 - DEBUG - [BRAIN] Classifying command: 'add task buy groceries'
+2026-01-02 19:33:47 - DEBUG - [BRAIN] Classified as: add_task
+2026-01-02 19:33:47 - INFO - Command 'add task buy groceries' classified as: add_task
+2026-01-02 19:33:47 - DEBUG - [BRAIN] Classifying command: 'read my tasks'
+2026-01-02 19:33:47 - DEBUG - [BRAIN] Classified as: read_tasks
+2026-01-02 19:33:47 - INFO - Command 'read my tasks' classified as: read_tasks
+2026-01-02 19:33:47 - DEBUG - [BRAIN] Classifying command: 'what time is it'
+2026-01-02 19:33:47 - DEBUG - [BRAIN] Classified as: tell_time
+2026-01-02 19:33:47 - INFO - Command 'what time is it' classified as: tell_time
+2026-01-02 19:33:47 - INFO - Testing task operations
+2026-01-02 19:33:47 - INFO - [MEMORY] Adding task: Test task for debug logging
+2026-01-02 19:33:47 - INFO - [MEMORY] Predicting priority for task: Test task for debug logging
+2026-01-02 19:33:47 - INFO - [MEMORY] Priority set to MEDIUM: default priority
+2026-01-02 19:33:47 - INFO - [MEMORY] Task 1 added with priority medium
+2026-01-02 19:33:47 - INFO - Current tasks: 1 tasks
+2026-01-02 19:33:47 - DEBUG - Calling CoUninitialize()
+2026-01-02 19:33:47 - DEBUG - CoUninitialize() done.
+2026-01-02 19:33:47 - DEBUG - <comtypes.client._events.CreateEventReceiver.<locals>.Sink object at 0x00000266880A3CB0>.Release() -> 0
+2026-01-02 19:33:47 - DEBUG - 0 active COM objects: Removed <comtypes.client._events.CreateEventReceiver.<locals>.Sink object at 0x00000266880A3CB0>
+2026-01-02 19:33:47 - DEBUG - Remaining: []

@@ -1,0 +1,107 @@
+[
+  {
+    "timestamp": "2026-01-03T18:40:05.201087",
+    "command": "open notepad",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:40:22.339107",
+    "command": "type",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:40:52.720148",
+    "command": "what time is it",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:41:13.973855",
+    "command": "open whatsapp",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:41:41.230462",
+    "command": "at tas",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:42:15.100369",
+    "command": "open browser",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:42:45.073697",
+    "command": "at task",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:42:56.328462",
+    "command": "ask that charge b",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:43:19.937560",
+    "command": "read my",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:44:58.745615",
+    "command": "open whatsapp",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:52:29.362948",
+    "command": "open whatsapp",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:55:08.208659",
+    "command": "complete task 1",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:55:24.726667",
+    "command": "what what time is it",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:55:40.216929",
+    "command": "open browser",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  },
+  {
+    "timestamp": "2026-01-03T18:55:52.857863",
+    "command": "open chat gpt",
+    "success": true,
+    "day_of_week": 5,
+    "hour": 18
+  }
+]

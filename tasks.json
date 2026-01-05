@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "description": "buy milk from store",
+    "completed": true,
+    "created_at": "2026-01-02T19:35:57.293957",
+    "priority": "medium",
+    "completed_at": "2026-01-03T18:55:07.619910"
+  },
+  {
+    "id": 2,
+    "description": "schedule dentist appointment",
+    "completed": false,
+    "created_at": "2026-01-02T19:35:57.295172",
+    "priority": "medium"
+  },
+  {
+    "id": 3,
+    "description": "finish work report",
+    "completed": true,
+    "created_at": "2026-01-02T19:35:57.296165",
+    "priority": "medium",
+    "completed_at": "2026-01-02T19:35:57.502543"
+  },
+  {
+    "id": 4,
+    "description": "call mom",
+    "completed": false,
+    "created_at": "2026-01-02T19:35:57.297464",
+    "priority": "medium"
+  },
+  {
+    "id": 5,
+    "description": "urgent client call",
+    "completed": false,
+    "created_at": "2026-01-02T19:35:57.508087",
+    "priority": "high"
+  },
+  {
+    "id": 6,
+    "description": "water the plants",
+    "completed": false,
+    "created_at": "2026-01-02T19:35:57.509676",
+    "priority": "medium"
+  }
+]
