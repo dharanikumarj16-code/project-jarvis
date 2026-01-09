@@ -76,7 +76,8 @@ def demo_learning_ai():
         for category, data in prefs["task_categories"].items():
             count = data.get("count", 0)
             avg_time = data.get("avg_completion_hours", 0)
-            print(".1f"   else:)
+            print(f"   - {category}: {count} tasks, {avg_time:.1f}h avg")
+    else:
         print("   No learning data yet. Keep using Jarvis!")
 
     print("\n✅ Demo Complete!")

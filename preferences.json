@@ -3,12 +3,12 @@
   "usage_patterns": {},
   "task_categories": {
     "shopping": {
-      "count": 2,
-      "avg_completion_hours": 11.659782127222224
+      "count": 3,
+      "avg_completion_hours": 62.74118998796296
     },
     "work": {
-      "count": 1,
-      "avg_completion_hours": 5.732722222222223e-05
+      "count": 2,
+      "avg_completion_hours": 82.45204570888889
     }
   },
   "preferred_times": {}
