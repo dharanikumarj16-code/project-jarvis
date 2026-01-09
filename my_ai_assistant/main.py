@@ -58,7 +58,7 @@ def main():
     print("   • 'Jarvis exit' to stop")
     print("\nAlways start commands with 'Jarvis'. Say 'Jarvis exit' to stop.\n")
 
-    speak("Jarvis is ready. How can I help you today? Dharani!")
+    speak("Jarvis is ready. How can I help you today? Dharani")
 
     interaction_count = 0
     error_count = 0
