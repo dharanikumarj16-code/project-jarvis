@@ -7,4 +7,3 @@ engine.setProperty('volume', 1.0) # volume
 def speak(text):
     engine.say(text)
     engine.runAndWait()
-    speak("AI:" + text)
