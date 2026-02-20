@@ -133,6 +133,20 @@ def learn_from_completion(task):
 
     save_preferences(prefs)
 
+def get_learned_actions():
+    """Retrieve learned automation actions"""
+    prefs = load_preferences()
+    return prefs.get("learned_actions", {})
+
+def add_learned_action(name, steps):
+    """Save a new learned action sequence"""
+    prefs = load_preferences()
+    if "learned_actions" not in prefs:
+        prefs["learned_actions"] = {}
+    prefs["learned_actions"][name.lower()] = steps
+    save_preferences(prefs)
+    return f"Action '{name}' learned with {len(steps)} steps."
+
 def get_smart_suggestions():
     """Generate smart suggestions based on learned patterns"""
     prefs = load_preferences()

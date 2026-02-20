@@ -1,0 +1,11 @@
+google-genai
+openai
+Pillow
+SpeechRecognition
+pyautogui
+opencv-python
+beautifulsoup4
+requests
+duckduckgo-search
+pyaudio
+pyttsx3

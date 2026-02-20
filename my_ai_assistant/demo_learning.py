@@ -4,12 +4,18 @@ Jarvis Learning AI Demo
 Demonstrates the learning capabilities of the Jarvis AI assistant
 """
 
+import sys
+import os
+# Add project root to sys.path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from core.memory import (
     add_task, get_tasks, complete_task, get_smart_suggestions,
     predict_task_priority, update_task_priorities, load_preferences
 )
 from datetime import datetime, timedelta
 import time
+import json
 
 def demo_learning_ai():
     print("🤖 Jarvis Learning AI Demo")
@@ -70,19 +76,28 @@ def demo_learning_ai():
 
     # Demo 6: Learning Data Summary
     print("\n6. 📊 Learning Data Summary")
-    prefs = load_preferences()
-    if prefs.get("task_categories"):
-        print("   Task Categories Learned:")
-        for category, data in prefs["task_categories"].items():
-            count = data.get("count", 0)
-            avg_time = data.get("avg_completion_hours", 0)
-            print(f"   - {category}: {count} tasks, {avg_time:.1f}h avg")
-    else:
-        print("   No learning data yet. Keep using Jarvis!")
+    try:
+        prefs = load_preferences()
+        if prefs and prefs.get("task_categories"):
+            print("   Task Categories Learned:")
+            for category, data in prefs["task_categories"].items():
+                count = data.get("count", 0)
+                avg_time = data.get("avg_completion_hours", 0)
+                print(f"   - {category}: {count} tasks, {avg_time:.1f}h avg")
+        else:
+            print("   No learning data yet. Keep using Jarvis!")
+    except json.JSONDecodeError:
+        print("   ❌ Error: Could not read learning data. The memory file may be corrupt.")
+        print("   💡 You may need to delete the underlying data file (e.g., preferences.json) to fix this.")
 
     print("\n✅ Demo Complete!")
     print("💡 The more you use Jarvis, the smarter it gets!")
     print("   It learns your patterns, preferences, and task completion habits.")
 
 if __name__ == "__main__":
-    demo_learning_ai()
+    try:
+        demo_learning_ai()
+    except json.JSONDecodeError:
+        print("\n❌ CRITICAL ERROR: Memory Corruption Detected")
+        print("   The JSON data file contains extra data (lines appended incorrectly).")
+        print("   Solution: Delete 'preferences.json' or the memory data file to reset.")

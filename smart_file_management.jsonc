@@ -1,0 +1,123 @@
+{
+  "feature": "smart_file_management",
+  "description": "Open files by name and automatically choose the correct application.",
+  "user_commands": [
+    "open file <file_name>",
+    "open document <file_name>",
+    "open <file_name>"
+  ],
+  "file_opening_logic": {
+    "by_file_name": {
+      "action": "search_indexed_locations",
+      "parameters": {
+        "input": "file_name",
+        "search_scope": [
+          "user_home",
+          "desktop",
+          "documents",
+          "downloads"
+        ],
+        "prioritize_recent": true
+      },
+      "output": "file_path_list"
+    },
+    "by_file_type": {
+      "video_files": {
+        "extensions": [
+          ".mp4",
+          ".mkv",
+          ".avi",
+          ".mov",
+          ".wmv"
+        ],
+        "open_with": "default_video_player"
+      },
+      "audio_files": {
+        "extensions": [
+          ".mp3",
+          ".wav",
+          ".aac",
+          ".flac"
+        ],
+        "open_with": "default_audio_player"
+      },
+      "document_files": {
+        "word": {
+          "extensions": [
+            ".doc",
+            ".docx"
+          ],
+          "open_with": "microsoft_word"
+        },
+        "pdf": {
+          "extensions": [
+            ".pdf"
+          ],
+          "open_with": "pdf_reader"
+        },
+        "text": {
+          "extensions": [
+            ".txt",
+            ".rtf"
+          ],
+          "open_with": "text_editor"
+        },
+        "spreadsheet": {
+          "extensions": [
+            ".xls",
+            ".xlsx",
+            ".csv"
+          ],
+          "open_with": "spreadsheet_application"
+        },
+        "presentation": {
+          "extensions": [
+            ".ppt",
+            ".pptx"
+          ],
+          "open_with": "presentation_application"
+        }
+      },
+      "image_files": {
+        "extensions": [
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".gif",
+          ".bmp",
+          ".svg"
+        ],
+        "open_with": "image_viewer"
+      },
+      "code_files": {
+        "extensions": [
+          ".py",
+          ".js",
+          ".html",
+          ".css",
+          ".java",
+          ".c",
+          ".cpp",
+          ".kt",
+          ".swift"
+        ],
+        "open_with": "code_editor"
+      },
+      "compressed_files": {
+        "extensions": [
+          ".zip",
+          ".rar",
+          ".7z",
+          ".tar",
+          ".gz"
+        ],
+        "open_with": "archive_manager"
+      }
+    }
+  },
+  "fallback_behavior": {
+    "file_not_found": "ask user to confirm file name",
+    "multiple_files_found": "show list and ask user to choose",
+    "unknown_file_type": "open with default system application"
+  }
+}

@@ -2,4 +2,7 @@ SpeechRecognition
 pyaudio
 pyttsx3
 openai
-google-generativeai
+google-genai
+Pillow
+pyautogui
+opencv-python

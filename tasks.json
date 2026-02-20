@@ -1,88 +1,74 @@
-[
-  {
-    "id": 1,
-    "description": "buy milk from store",
-    "completed": true,
-    "created_at": "2026-01-02T19:35:57.293957",
-    "priority": "medium",
-    "completed_at": "2026-01-09T16:30:11.714511"
-  },
-  {
-    "id": 2,
-    "description": "schedule dentist appointment",
-    "completed": false,
-    "created_at": "2026-01-02T19:35:57.295172",
-    "priority": "medium"
-  },
-  {
-    "id": 3,
-    "description": "finish work report",
-    "completed": true,
-    "created_at": "2026-01-02T19:35:57.296165",
-    "priority": "medium",
-    "completed_at": "2026-01-09T16:30:11.818891"
-  },
-  {
-    "id": 4,
-    "description": "call mom",
-    "completed": false,
-    "created_at": "2026-01-02T19:35:57.297464",
-    "priority": "medium"
-  },
-  {
-    "id": 5,
-    "description": "urgent client call",
-    "completed": false,
-    "created_at": "2026-01-02T19:35:57.508087",
-    "priority": "high"
-  },
-  {
-    "id": 6,
-    "description": "water the plants",
-    "completed": false,
-    "created_at": "2026-01-02T19:35:57.509676",
-    "priority": "medium"
-  },
-  {
-    "id": 7,
-    "description": "buy milk from store",
-    "completed": false,
-    "created_at": "2026-01-09T16:30:11.609555",
-    "priority": "medium"
-  },
-  {
-    "id": 8,
-    "description": "schedule dentist appointment",
-    "completed": false,
-    "created_at": "2026-01-09T16:30:11.611160",
-    "priority": "medium"
-  },
-  {
-    "id": 9,
-    "description": "finish work report",
-    "completed": false,
-    "created_at": "2026-01-09T16:30:11.612075",
-    "priority": "low"
-  },
-  {
-    "id": 10,
-    "description": "call mom",
-    "completed": false,
-    "created_at": "2026-01-09T16:30:11.612936",
-    "priority": "medium"
-  },
-  {
-    "id": 11,
-    "description": "urgent client call",
-    "completed": false,
-    "created_at": "2026-01-09T16:30:11.822625",
-    "priority": "high"
-  },
-  {
-    "id": 12,
-    "description": "water the plants",
-    "completed": false,
-    "created_at": "2026-01-09T16:30:11.824999",
-    "priority": "medium"
+{
+  "user_type": "normal_computer_user",
+  "daily_actions": {
+    "basic_system_use": [
+      "turn on computer",
+      "unlock system",
+      "connect to internet",
+      "adjust volume and brightness"
+    ],
+    "file_management": [
+      "create new folder",
+      "rename file or folder",
+      "copy files",
+      "move files",
+      "delete files",
+      "search for a file",
+      "open recent files"
+    ],
+    "shortcuts_and_controls": [
+      "use keyboard shortcuts",
+      "alt tab between applications",
+      "use copy paste shortcuts",
+      "lock system using shortcut"
+    ],
+    "screens_and_media": [
+      "take screenshot",
+      "record screen",
+      "open camera",
+      "play audio or video"
+    ],
+    "applications": [
+      "open application",
+      "close application",
+      "minimize or maximize window",
+      "install or uninstall application"
+    ],
+    "notifications": [
+      "read system notifications",
+      "clear notifications",
+      "respond to notification",
+      "check battery or system alerts"
+    ],
+    "internet_and_browsing": [
+      "open browser",
+      "search on internet",
+      "download files",
+      "upload files",
+      "bookmark a website"
+    ],
+    "documents_and_work": [
+      "create document",
+      "edit document",
+      "save file",
+      "print document"
+    ],
+    "system_settings": [
+      "open settings",
+      "change wallpaper",
+      "connect bluetooth device",
+      "connect wifi",
+      "update system"
+    ],
+    "security": [
+      "lock computer",
+      "change password",
+      "scan for virus"
+    ],
+    "power_actions": [
+      "sleep system",
+      "restart system",
+      "shutdown system"
+    ]
   }
-]
+}

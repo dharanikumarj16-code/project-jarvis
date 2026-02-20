@@ -1,0 +1,39 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hello", "Hey Jarvis", "Good morning", "Is anyone there?", "Wake up"],
+      "responses": ["Hello!", "At your service.", "Hi there.", "I am ready."]
+    },
+    {
+      "tag": "exit",
+      "patterns": ["Bye", "See you later", "Goodbye", "Exit", "Quit", "Stop", "Shut down"],
+      "responses": ["Goodbye!", "Shutting down."]
+    },
+    {
+      "tag": "tell_time",
+      "patterns": ["What time is it", "Tell me the time", "Do you have the time", "Current time", "Clock"],
+      "responses": []
+    },
+    {
+      "tag": "open_notepad",
+      "patterns": ["Open notepad", "Start notepad", "I need to write something", "Open text editor", "Create a note"],
+      "responses": []
+    },
+    {
+      "tag": "open_browser",
+      "patterns": ["Open google", "Open chrome", "Start browser", "Open internet", "Launch web"],
+      "responses": []
+    },
+    {
+      "tag": "add_task",
+      "patterns": ["Add a task", "New task", "Remind me to", "Create a to-do", "I need to do something"],
+      "responses": []
+    },
+    {
+      "tag": "search_web",
+      "patterns": ["Search for", "Google this", "Look up", "Find information about", "Who is"],
+      "responses": []
+    }
+  ]
+}

@@ -1,9 +1,18 @@
+import sys
 import os
-import os.path
-import openai
+
+# Add project root to sys.path to fix ModuleNotFoundError
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from openai import OpenAI, OpenAIError
+except ImportError:
+    print("⚠️ OpenAI library not found. Run: pip install openai")
+    OpenAI = None
+    OpenAIError = Exception
 from core.permissions import ask_permission
 
-def setup_chatgpt_api():
+def get_api_key():
     """
     Setup ChatGPT API with secure key management.
     API key should be stored in environment variable or config file.
@@ -16,15 +25,15 @@ def setup_chatgpt_api():
             with open(config_file, 'r') as f:
                 for line in f:
                     if line.startswith('OPENAI_API_KEY='):
-                        api_key = line.split('=', 1)[1].strip()
+                        api_key = line.split('=', 1)[1].strip().strip('"').strip("'")
                         break
 
-    if api_key:
-        openai.api_key = api_key
-        return True
-    return False
+    return api_key
 
-def ask_chatgpt(prompt, context=""):
+def setup_chatgpt_api():
+    return bool(get_api_key()) and (OpenAI is not None)
+
+def ask_chatgpt(prompt, context="", require_permission=True):
     """
     Integrate with ChatGPT for text generation and suggestions.
     This is used for drafting messages, generating summaries, etc.
@@ -33,19 +42,27 @@ def ask_chatgpt(prompt, context=""):
     Args:
         prompt: The user's request for ChatGPT
         context: Additional context about the request
+        require_permission: Whether to ask user for permission (default: True)
 
     Returns:
         ChatGPT response or error message
     """
-    if not setup_chatgpt_api():
+    if OpenAI is None:
+        return "OpenAI library not installed. Please run: pip install openai"
+
+    api_key = get_api_key()
+    if not api_key:
         return "ChatGPT integration not configured. Please set OPENAI_API_KEY environment variable or add it to config.txt"
 
     # Ask permission before making external API call
-    action_description = f"send request to ChatGPT API for: '{prompt[:50]}...'"
-    if not ask_permission(action_description):
-        return "ChatGPT request cancelled by user."
+    if require_permission:
+        action_description = f"send request to ChatGPT API for: '{prompt[:50]}...'"
+        if not ask_permission(action_description):
+            return "ChatGPT request cancelled by user."
 
     try:
+        client = OpenAI(api_key=api_key)
+
         # Create a safe, limited prompt that emphasizes this is for assistance only
         safe_prompt = f"""
         You are a helpful assistant for text generation and suggestions.
@@ -58,8 +75,8 @@ def ask_chatgpt(prompt, context=""):
         Provide a helpful response focused on text generation, suggestions, or drafting.
         """
 
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Using GPT-3.5 for cost effectiveness
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # Updated to GPT-4o-mini (Cheaper & Better than 3.5)
             messages=[
                 {"role": "system", "content": "You are a text generation assistant. You cannot perform system actions."},
                 {"role": "user", "content": safe_prompt}
@@ -70,7 +87,7 @@ def ask_chatgpt(prompt, context=""):
 
         return response.choices[0].message.content.strip()
 
-    except openai.error.OpenAIError as e:
+    except OpenAIError as e:
         return f"ChatGPT API error: {str(e)}"
     except Exception as e:
         return f"Unexpected error with ChatGPT: {str(e)}"
@@ -91,4 +108,12 @@ def draft_message(topic, tone="professional"):
     Use ChatGPT to draft messages or notes.
     """
     prompt = f"Draft a {tone} message about: {topic}"
-    return ask_chatgpt(prompt, f"Message drafting in {tone} tone") 
+    return ask_chatgpt(prompt, f"Message drafting in {tone} tone")
+
+if __name__ == "__main__":
+    print("🤖 Testing ChatGPT Connection...")
+    if setup_chatgpt_api():
+        print("✅ API Key found. Sending test request...")
+        print(f"💬 Response: {ask_chatgpt('Hello, are you online?', require_permission=False)}")
+    else:
+        print("❌ Setup failed. Please check config.txt and run: pip install openai")
