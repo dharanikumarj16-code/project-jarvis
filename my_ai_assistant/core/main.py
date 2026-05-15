@@ -1,13 +1,24 @@
+import sys
+import pathlib
+
+# When running this module as a script (python core/main.py), Python
+# sets sys.path[0] to the containing directory (core/). That prevents
+# sibling top-level packages (like `input` and `output`) from being
+# importable. Ensure the project root is on sys.path so absolute
+# imports resolve the same whether run as a script or as a package.
+_PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
 from input.voice import listen
 from input.text import read_text
-from core.brain import process_command
+from core.brain import process_request
 from core.memory import get_smart_suggestions, log_usage
 from output.speech import speak
 from core.scheduler import scheduler
 from core.shortcuts_manager import lookup_shortcut
 import random
 import os
-import sys
 import threading
 import time
 import logging
@@ -80,8 +91,8 @@ def process_single_command(command, source="voice"):
     if shortcut_response:
         response = shortcut_response
     else:
-        # Process standard commands
-        response = process_command(command)
+        # Process standard commands using the new NLP-enabled entry point
+        response = process_request(command)
     
     # Output
     print(f"Jarvis: {response}")

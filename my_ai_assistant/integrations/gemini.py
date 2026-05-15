@@ -4,7 +4,12 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import json
 import re
-from google import genai
+try:
+    from google import genai
+    HAS_GENAI = True
+except Exception:
+    genai = None
+    HAS_GENAI = False
 import PIL.Image
 from core.permissions import ask_permission
 def get_api_key():
@@ -41,6 +46,8 @@ def ask_gemini(prompt, context="", require_permission=True):
         Gemini response or error message
     """
     api_key = get_api_key()
+    if not HAS_GENAI:
+        return "Gemini client library not installed. Install the Google GenAI SDK or disable Gemini integration."
     if not api_key:
         return "Gemini integration not configured. Please set GOOGLE_API_KEY environment variable or add it to config.txt"
 
@@ -66,7 +73,7 @@ def ask_gemini(prompt, context="", require_permission=True):
         """
 
         response = client.models.generate_content(
-            model='gemini-pro',
+            model='gemini-2.0-flash',
             contents=safe_prompt
         )
 
@@ -93,6 +100,9 @@ def chat_with_gemini(user_input, reset=False):
     if not api_key:
         return "Gemini API key not found."
 
+    if not HAS_GENAI:
+        return "Gemini client library not installed. Chat unavailable."
+
     try:
         client = genai.Client(api_key=api_key)
         
@@ -111,7 +121,7 @@ def chat_with_gemini(user_input, reset=False):
         """
         
         response = client.models.generate_content(
-            model='gemini-pro',
+            model='gemini-2.0-flash',
             contents=prompt
         )
         
@@ -130,6 +140,9 @@ def decide_intent(user_input):
     api_key = get_api_key()
     if not api_key:
         return {"intent": "error", "response_text": "Gemini API Key not found."}
+
+    if not HAS_GENAI:
+        return {"intent": "error", "response_text": "Gemini client library not installed."}
 
     try:
         client = genai.Client(api_key=api_key)
@@ -170,7 +183,7 @@ def decide_intent(user_input):
         """
         
         response = client.models.generate_content(
-            model='gemini-pro',
+            model='gemini-2.0-flash',
             contents=prompt
         )
         
@@ -245,6 +258,9 @@ def analyze_image(prompt, image_path):
     if not api_key:
         return "Gemini integration not configured."
 
+    if not HAS_GENAI:
+        return "Gemini client library not installed. Image analysis unavailable."
+
     if not os.path.exists(image_path):
         return "Image file not found."
 
@@ -271,6 +287,10 @@ def parse_automation_command(command):
     """
     api_key = get_api_key()
     if not api_key:
+        return []
+
+    if not HAS_GENAI:
+        # Can't parse with Gemini; return empty list so caller can fallback
         return []
 
     prompt = f"""
@@ -309,7 +329,7 @@ def parse_automation_command(command):
     try:
         client = genai.Client(api_key=api_key)
         response = client.models.generate_content(
-            model='gemini-pro',
+            model='gemini-2.0-flash',
             contents=prompt
         )
         

@@ -3,10 +3,20 @@ import numpy as np
 import pickle
 import logging
 
-# Suppress TensorFlow logs
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import tensorflow as tf
-from tensorflow.keras.preprocessing.sequence import pad_sequences
+# Try to import TensorFlow, but allow the project to run without it.
+# Some users run into install issues (OS/CPU/GPU/CUDA, or unsupported Python
+# versions). Guarding the import lets the assistant start and degrade
+# gracefully when TensorFlow isn't available.
+os.environ.setdefault('TF_CPP_MIN_LOG_LEVEL', '3')
+TF_AVAILABLE = True
+try:
+    import tensorflow as tf
+    from tensorflow.keras.preprocessing.sequence import pad_sequences
+except Exception as _tf_err:
+    tf = None
+    pad_sequences = None
+    TF_AVAILABLE = False
+    logging.warning(f"TensorFlow not available: {_tf_err}")
 class NeuralBrain:
     def __init__(self):
         self.model = None
@@ -14,6 +24,11 @@ class NeuralBrain:
         self.lbl_encoder = None
         self.max_len = 20
         self.ready = False
+        if not TF_AVAILABLE:
+            print("⚠️ TensorFlow is not installed or failed to import. Neural features disabled.")
+            self.ready = False
+            return
+
         self._load_brain()
 
     def _load_brain(self):
@@ -36,7 +51,9 @@ class NeuralBrain:
             self.ready = True
             print("🧠 Neural Brain loaded successfully.")
         except Exception as e:
-            print(f"⚠️ Neural Brain not ready: {e}")
+            # Avoid printing non-encodable emoji on Windows consoles
+            logging.warning(f"Neural Brain not ready: {e}")
+            print("Neural Brain not ready:", e)
             print("   (Run 'train_brain.py' to create the neural network)")
             self.ready = False
 

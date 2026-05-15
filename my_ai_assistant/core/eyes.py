@@ -13,6 +13,19 @@ except ImportError:
     pyautogui = None
     print("⚠️ pyautogui not found. Screen capture disabled.")
 
+try:
+    import mss
+    import mss.tools
+except ImportError:
+    mss = None
+    print("⚠️ mss not found. Fast screen capture disabled.")
+
+try:
+    import pytesseract
+except ImportError:
+    pytesseract = None
+    print("⚠️ pytesseract not found. OCR disabled.")
+
 class VisionSystem:
     def __init__(self):
         self.camera_index = 0
@@ -66,3 +79,41 @@ class VisionSystem:
         except Exception as e:
             print(f"❌ Screen capture failed: {e}")
             return None
+
+    def get_ocr_data(self):
+        """
+        Captures the screen using mss and extracts text with bounding boxes using pytesseract.
+        Returns a dictionary mapping text to [x, y] coordinates.
+        """
+        if not mss or not pytesseract:
+            print("⚠️ mss or pytesseract not available. Using mock OCR data.")
+            # Mock OCR data for demonstration and testing anti-gravity
+            return {"Chrome_Icon": [45, 1020], "Search_Bar": [500, 20]}
+
+        print("🔍 Scanning screen for UI elements...")
+        try:
+            from PIL import Image
+            with mss.mss() as sct:
+                monitor = sct.monitors[1]  # primary monitor
+                sct_img = sct.grab(monitor)
+                img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
+
+                # Perform OCR and get data with bounding boxes
+                # Level 5 is for words
+                data = pytesseract.image_to_data(img, output_type=pytesseract.Output.DICT)
+                
+                ocr_result = {}
+                n_boxes = len(data['text'])
+                for i in range(n_boxes):
+                    if int(data['conf'][i]) > 60:  # Confidence threshold
+                        text = data['text'][i].strip()
+                        if text:
+                            # Calculate center of the bounding box
+                            x = data['left'][i] + (data['width'][i] // 2)
+                            y = data['top'][i] + (data['height'][i] // 2)
+                            ocr_result[text] = [x, y]
+                
+                return ocr_result
+        except Exception as e:
+            print(f"❌ OCR extraction failed: {e}")
+            return {}

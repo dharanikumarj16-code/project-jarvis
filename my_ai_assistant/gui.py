@@ -63,7 +63,9 @@ class JarvisGUI:
             "idle": "#00FFFF",      # Cyan (Waiting)
             "listening": "#FFaa00", # Orange (Mic Active)
             "executing": "#00FF00", # Green (Processing)
-            "error": "#FF0000"      # Red (Error)
+            "error": "#FF0000",     # Red (Error)
+            "ai_work": "#FF00FF",   # Magenta (AI Work Mode)
+            "chat": "#FFFF00"       # Yellow (Chat Mode)
         }
 
         # --- 3.3 Output Overlay (Top of Screen) ---
@@ -142,8 +144,9 @@ class JarvisGUI:
                 x_pos = cx - 12 + (i * 12)
                 self.canvas.create_oval(x_pos-3, y_bounce-3, x_pos+3, y_bounce+3, fill="#00FF00", outline="")
 
-        # 3. Active Listening (Pulsing)
-        elif self.state == "listening":
+        # 3. Active Listening / AI Work / Chat (Pulsing)
+        elif self.state in ["listening", "ai_work", "chat"]:
+            color = self.state_colors.get(self.state, "#00FFFF")
             # Pulsing Ripples (Multiple circles expanding)
             for i in range(3):
                 # Create a staggered expansion effect
@@ -154,8 +157,8 @@ class JarvisGUI:
                     # Thinner line as it expands to simulate fading
                     width = max(1, 3 - int(phase))
                     self.canvas.create_oval(cx-radius, cy-radius, cx+radius, cy+radius, 
-                                          outline="#00FFFF", width=width)
-            self._draw_mic_icon(color="#00FFFF")
+                                          outline=color, width=width)
+            self._draw_mic_icon(color=color)
 
         # 4. Idle State
         else:

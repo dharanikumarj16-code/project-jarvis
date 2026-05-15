@@ -9,14 +9,15 @@ except ImportError:
     pyautogui = None
     logging.warning("pyautogui module not found. Device control will be disabled.")
 
+
 class DeviceController:
     def __init__(self):
         self.enabled = False
         if pyautogui:
             self.enabled = True
-            print("✅ Device Automation (Mouse/Keyboard) enabled")
+            print("Device Automation (Mouse/Keyboard) enabled")
         else:
-            print("⚠️ pyautogui not found. Install with: pip install pyautogui")
+            print("pyautogui not found. Install with: pip install pyautogui")
 
     def scroll(self, direction, amount=500):
         if not self.enabled: return "Device control disabled"

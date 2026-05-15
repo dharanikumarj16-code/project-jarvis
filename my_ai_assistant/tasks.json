@@ -5,7 +5,7 @@
     "completed": true,
     "created_at": "2026-01-02T19:33:47.172625",
     "priority": "medium",
-    "completed_at": "2026-01-15T22:50:20.835279"
+    "completed_at": "2026-05-07T10:47:58.000285"
   },
   {
     "id": 2,
@@ -20,7 +20,7 @@
     "completed": true,
     "created_at": "2026-01-15T22:50:20.729919",
     "priority": "medium",
-    "completed_at": "2026-01-15T22:50:20.938626"
+    "completed_at": "2026-05-07T10:47:58.128055"
   },
   {
     "id": 4,
@@ -48,6 +48,118 @@
     "description": "water the plants",
     "completed": false,
     "created_at": "2026-01-15T22:50:20.944107",
+    "priority": "medium"
+  },
+  {
+    "id": 8,
+    "description": "buy milk from store",
+    "completed": false,
+    "created_at": "2026-04-29T00:08:44.571595",
+    "priority": "medium"
+  },
+  {
+    "id": 9,
+    "description": "schedule dentist appointment",
+    "completed": false,
+    "created_at": "2026-04-29T00:08:44.574177",
+    "priority": "medium"
+  },
+  {
+    "id": 10,
+    "description": "finish work report",
+    "completed": false,
+    "created_at": "2026-04-29T00:08:44.578149",
+    "priority": "medium"
+  },
+  {
+    "id": 11,
+    "description": "call mom",
+    "completed": false,
+    "created_at": "2026-04-29T00:08:44.580794",
+    "priority": "medium"
+  },
+  {
+    "id": 12,
+    "description": "urgent client call",
+    "completed": false,
+    "created_at": "2026-04-29T00:08:44.801699",
+    "priority": "high"
+  },
+  {
+    "id": 13,
+    "description": "water the plants",
+    "completed": false,
+    "created_at": "2026-04-29T00:08:44.806740",
+    "priority": "medium"
+  },
+  {
+    "id": 14,
+    "description": "test jarvis system",
+    "completed": false,
+    "created_at": "2026-05-05T13:00:08.548859",
+    "priority": "medium"
+  },
+  {
+    "id": 15,
+    "description": "test jarvis system",
+    "completed": false,
+    "created_at": "2026-05-05T13:00:59.035610",
+    "priority": "medium"
+  },
+  {
+    "id": 16,
+    "description": "buy milk from store",
+    "completed": false,
+    "created_at": "2026-05-07T10:47:57.872439",
+    "priority": "medium"
+  },
+  {
+    "id": 17,
+    "description": "schedule dentist appointment",
+    "completed": false,
+    "created_at": "2026-05-07T10:47:57.879624",
+    "priority": "medium"
+  },
+  {
+    "id": 18,
+    "description": "finish work report",
+    "completed": false,
+    "created_at": "2026-05-07T10:47:57.886186",
+    "priority": "medium"
+  },
+  {
+    "id": 19,
+    "description": "call mom",
+    "completed": false,
+    "created_at": "2026-05-07T10:47:57.893708",
+    "priority": "medium"
+  },
+  {
+    "id": 20,
+    "description": "urgent client call",
+    "completed": false,
+    "created_at": "2026-05-07T10:47:58.341183",
+    "priority": "high"
+  },
+  {
+    "id": 21,
+    "description": "water the plants",
+    "completed": false,
+    "created_at": "2026-05-07T10:47:58.350795",
+    "priority": "medium"
+  },
+  {
+    "id": 22,
+    "description": "buy milk",
+    "completed": false,
+    "created_at": "2026-05-08T12:11:39.269811",
+    "priority": "medium"
+  },
+  {
+    "id": 23,
+    "description": "learn python",
+    "completed": false,
+    "created_at": "2026-05-08T12:11:39.525772",
     "priority": "medium"
   }
 ]

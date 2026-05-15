@@ -12,59 +12,89 @@ except ImportError:
 
 def execute_automation_steps(steps):
     """
-    Executes a list of automation steps (mouse/keyboard actions).
-    Args:
-        steps: List of dicts, e.g., [{"action": "type", "value": "hello"}]
+    Backward compatibility wrapper for execute_sequence.
+    """
+    return execute_sequence(steps)
+
+def execute_sequence(steps):
+    """
+    Executes a precise sequence of OS Reasoning Engine commands.
+    Handles both 'value' (legacy) and 'params' (new) keys.
+    Maps common action names (e.g., 'type' and 'write').
     """
     if not pyautogui:
         print("❌ Automation skipped: PyAutoGUI not installed.")
         return False
-
-    print(f"🤖 Executing {len(steps)} automation steps...")
+        
+    print(f"🤖 Executing sequence ({len(steps)} steps)...")
     
     for step in steps:
         action = step.get("action")
-        value = step.get("value")
+        # Support both 'params' and 'value'
+        params = step.get("params")
+        if params is None:
+            value = step.get("value")
+            params = [value] if value is not None else []
+            
+        delay = step.get("delay", 0.5)
         
-        print(f"   👉 {action}: {value}")
+        print(f"   👉 {action}: {params}")
         
         try:
-            if action == "open":
-                # Open Start Menu and type app name
-                pyautogui.press("win")
-                time.sleep(0.5)
-                pyautogui.write(value)
-                time.sleep(1.0) # Wait for search
-                pyautogui.press("enter")
-                time.sleep(2.0) # Wait for app to open
-                
-            elif action == "type":
-                pyautogui.write(value, interval=0.05)
+            # Map common actions
+            if action in ["type", "write"]:
+                if params:
+                    pyautogui.write(str(params[0]), interval=0.05)
                 
             elif action == "press":
-                # Handle combos like "ctrl+s" or "alt+tab"
-                if "+" in value:
-                    keys = value.split("+")
-                    # Clean whitespace
-                    keys = [k.strip() for k in keys]
-                    pyautogui.hotkey(*keys)
-                else:
-                    pyautogui.press(value)
+                if params:
+                    val = str(params[0])
+                    if "+" in val:
+                        keys = [k.strip() for k in val.split("+")]
+                        pyautogui.hotkey(*keys)
+                    else:
+                        pyautogui.press(val)
                     
             elif action == "click":
-                if value == "right":
+                if len(params) >= 2:
+                    pyautogui.click(x=int(params[0]), y=int(params[1]))
+                elif params and params[0] == "right":
                     pyautogui.click(button='right')
-                elif value == "double":
+                elif params and params[0] == "double":
                     pyautogui.doubleClick()
                 else:
                     pyautogui.click()
                     
+            elif action == "open":
+                if params:
+                    pyautogui.press("win")
+                    time.sleep(0.5)
+                    pyautogui.write(str(params[0]))
+                    time.sleep(1.0)
+                    pyautogui.press("enter")
+                    time.sleep(2.0)
+
             elif action == "wait":
-                time.sleep(float(value))
-                
-            # Small buffer between actions
-            time.sleep(0.5)
+                if params:
+                    time.sleep(float(params[0]))
             
+            elif action == "scroll":
+                if params:
+                    pyautogui.scroll(int(params[0]))
+                    
+            elif action == "moveTo":
+                if len(params) >= 2:
+                    pyautogui.moveTo(int(params[0]), int(params[1]))
+                    
+            elif action == "dragTo":
+                if len(params) >= 3:
+                    pyautogui.dragTo(int(params[0]), int(params[1]), float(params[2]))
+                elif len(params) == 2:
+                    pyautogui.dragTo(int(params[0]), int(params[1]))
+                    
+            if delay > 0:
+                time.sleep(float(delay))
+                
         except Exception as e:
             print(f"❌ Error executing step {step}: {e}")
             return False

@@ -6,3 +6,9 @@ google-genai
 Pillow
 pyautogui
 opencv-python
+requests
+mss
+pytesseract
+mouse
+pynput
+spacy

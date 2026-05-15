@@ -6,7 +6,8 @@ from output.speech import speak
 from core.scheduler import scheduler
 from core.shortcuts_manager import lookup_shortcut
 from integrations.gemini import parse_automation_command, decide_intent
-from integrations.openclaw_wrapper import execute_agent_goal, safety_filter
+from integrations.ollama_wrapper import execute_agent_goal, safety_filter
+from core.antigravity import StateController, JarvisMode
 import random
 import os
 import sys
@@ -54,6 +55,9 @@ gui_app = None
 interaction_count = 0
 last_interaction_time = 0
 CONVERSATION_TIMEOUT = 30 # Seconds to keep mic active without "Jarvis"
+state_controller = StateController()
+
+from core.jarvis_core import jarvis
 
 def process_single_command(command, source="voice"):
     """Unified command processor for Voice and UI"""
@@ -61,13 +65,7 @@ def process_single_command(command, source="voice"):
     
     if not command: return
 
-    # Phase 6: Security Layer Check
-    if not safety_filter(command):
-        speak("I cannot execute this request due to safety protocols.")
-        if gui_app: gui_app.show_message(command, "🚫 Request Blocked (Safety)")
-        return
-
-    # Normalize: Remove "jarvis" prefix if present (common in text input)
+    # Normalize: Remove "jarvis" prefix if present
     if command.lower().startswith("jarvis"):
         command = command[6:].strip()
 
@@ -79,51 +77,26 @@ def process_single_command(command, source="voice"):
     print(f"User ({source}): {command}")
     debug_log(f"🧠 Processing command ({source}): '{command}'", 'debug')
 
-    # Check for exit
+    # Check for exit (Handled by JarvisSystem now, but keeping for direct exit if needed)
     if command.lower() in ["exit", "quit", "stop"]:
         speak("Goodbye!")
         os._exit(0)
 
-    # Check for Shortcut Queries first
-    shortcut_response = lookup_shortcut(command)
-    
-    if shortcut_response:
-        response = shortcut_response
-    else:
-        # --- STEP 3: Intent / Goal Classification Layer ---
-        # We use the Brain to decide if this is a simple command or a complex agent goal
-        
-        print("🤔 Analyzing intent...")
-        intent_data = decide_intent(command)
-        intent = intent_data.get("intent")
-        print(f"   👉 Intent detected: {intent}")
+    # --- Use New OOP Pipeline ---
+    try:
+        response = jarvis.process_command(command)
+    except Exception as e:
+        debug_log(f"Pipeline Error: {e}", 'error')
+        response = f"I encountered an error while processing that command: {e}"
 
-        if intent == "complex_goal":
-            # --- STEP 6: Agent Goal Loop (OpenClaw) ---
-            print("🚀 Routing to OpenClaw Agent...")
-            if gui_app: gui_app.show_message(command, "Agent working on it...")
-            speak("I'm on it. This might take a moment.")
-            
-            # Execute the complex goal
-            response = execute_agent_goal(command)
-            
-        elif intent == "chat":
-            # Simple conversation
-            response = intent_data.get("response_text")
-            
-        elif intent == "execute_action" or command.lower().startswith(("computer", "automate")):
-            # Direct Automation (Legacy/Fast path)
-            steps = parse_automation_command(command)
-            if steps:
-                speak(f"Executing {len(steps)} actions.")
-                from integrations.automation import execute_automation_steps
-                execute_automation_steps(steps)
-                response = "Done."
-            else:
-                response = "I couldn't understand the automation steps."
-        else:
-            # Fallback to standard simple command processor (Time, Date, Tasks)
-            response = process_command(command)
+    # Visual Feedback for Modes
+    if gui_app:
+        mode_states = {
+            "AI_WORK": "ai_work",
+            "CHAT": "chat",
+            "GENERAL": "idle"
+        }
+        gui_app.set_state(mode_states.get(jarvis.current_mode, "idle"))
     
     # Output
     print(f"Jarvis: {response}")
@@ -133,7 +106,8 @@ def process_single_command(command, source="voice"):
     if response:
         speak(response)
     
-    # Log & Learn
+    # Log & Learn (Using legacy memory for now as it's still integrated)
+    from core.memory import log_usage, get_smart_suggestions
     log_usage(command, True)
     interaction_count += 1
     last_interaction_time = time.time() # Keep conversation alive
@@ -146,10 +120,8 @@ def process_single_command(command, source="voice"):
                 suggestion = random.choice(suggestions)
                 print(f"Jarvis: 💡 {suggestion}")
                 speak(suggestion)
-        except json.JSONDecodeError as e:
-            debug_log(f"Failed to get smart suggestions due to JSON error: {e}", 'error')
-            print("Jarvis: 💡 My learning data seems to be corrupted. I can't provide a suggestion right now.")
-            speak("My learning data seems to be corrupted. I can't provide a suggestion right now.")
+        except Exception as e:
+            debug_log(f"Failed to get smart suggestions: {e}", 'error')
 
     # Reset HUD to Idle
     if gui_app: gui_app.set_state("idle")
@@ -173,7 +145,12 @@ def voice_listener_loop():
             # Visual feedback
             if gui_app: 
                 if is_conversation_active:
-                    gui_app.set_state("listening") # Orange (Active)
+                    if state_controller.current_mode == JarvisMode.AI_WORK:
+                        gui_app.set_state("ai_work")
+                    elif state_controller.current_mode == JarvisMode.CHAT:
+                        gui_app.set_state("chat")
+                    else:
+                        gui_app.set_state("listening") # Orange (Active)
                 else:
                     gui_app.set_state("idle") # Cyan (Waiting for "Jarvis")
                     

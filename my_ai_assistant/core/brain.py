@@ -6,13 +6,17 @@ from core.permissions import ask_permission, get_permission_history
 from core.memory import add_task, get_tasks, complete_task, log_usage, get_smart_suggestions, update_task_priorities, predict_task_priority, get_learned_actions, add_learned_action
 from core.shortcuts_manager import get_learned_shortcut, learn_new_shortcut
 from integrations.chatgpt import ask_chatgpt, generate_task_summary, draft_message
-from integrations.gemini import ask_gemini, generate_smart_suggestion, draft_email, analyze_image, parse_automation_command, summarize_web_content, chat_with_gemini, correct_speech_text, decide_intent
+from integrations.gemini import ask_gemini, generate_smart_suggestion, draft_email, analyze_image, parse_automation_command, summarize_web_content, chat_with_gemini, correct_speech_text
+from integrations.xai import decide_intent
 from integrations.web import search_web, extract_text_from_url
+from integrations.reasoning import ask_jarvis_llm
+from integrations.automation import execute_sequence as execute_os_sequence
 from output.speech import speak
 from core.hand import DeviceController
 from core.eyes import VisionSystem
 from core.scheduler import scheduler
 from core.neural import NeuralBrain
+from core.nlp import intent_recognizer
 import webbrowser
 import datetime
 import time
@@ -22,10 +26,71 @@ import logging
 
 DEBUG_MODE = os.getenv('JARVIS_DEBUG', 'false').lower() == 'true'
 
+# Global System State
+current_mode = "GENERAL"
+
 # Initialize Hardware and Vision
 sys_control = DeviceController()
 vision = VisionSystem()
 neural_brain = NeuralBrain()
+
+# Intent Handler Registry (Dictionary Mapping)
+INTENT_HANDLERS = {}
+
+def register_handler(intent_name):
+    """Decorator to register intent handlers"""
+    def decorator(func):
+        INTENT_HANDLERS[intent_name] = func
+        return func
+    return decorator
+
+@register_handler("tell_time")
+def handle_tell_time(args=None):
+    current_time = datetime.datetime.now().strftime("%I:%M %p")
+    return f"The current time is {current_time}"
+
+@register_handler("tell_date")
+def handle_tell_date(args=None):
+    current_date = datetime.datetime.now().strftime("%B %d, %Y")
+    return f"Today's date is {current_date}"
+
+@register_handler("add_task")
+def handle_add_task(args=None):
+    # args can be None if called from simple classify_command
+    task_desc = args.get("description") if args else None
+    if not task_desc:
+        # Fallback to current command if available, though handlers should ideally get args
+        return "Please specify what task to add."
+    result = add_task(task_desc)
+    log_usage("add_task", True)
+    return result
+
+@register_handler("read_tasks")
+def handle_read_tasks(args=None):
+    return get_tasks()
+
+@register_handler("open_notepad")
+def handle_open_notepad(args=None):
+    if ask_permission("open Notepad"):
+        os.system("start notepad")
+        return "Notepad opened successfully"
+    return "Permission denied."
+
+@register_handler("open_browser")
+def handle_open_browser(args=None):
+    if ask_permission("open web browser"):
+        webbrowser.open("https://google.com")
+        return "Browser opened successfully"
+    return "Permission denied."
+
+@register_handler("open_calculator")
+def handle_open_calculator(args=None):
+    if ask_permission("open Calculator"):
+        os.system("start calc")
+        return "Calculator opened successfully"
+    return "Permission denied."
+
+# ... more handlers can be moved here for better structure
 
 def debug_log(message, level='info'):
     """Log debug messages"""
@@ -242,6 +307,11 @@ def classify_command(command):
         debug_log(f"Classified as: execute_learned_action ({clean_cmd})", 'debug')
         return "execute_learned_action"
 
+    # OS Reasoning Engine Commands
+    if "anti gravity" in command or command.startswith("find ") or "click on" in command or "type into" in command or command.startswith("scroll ") or command.startswith("drag ") or command.startswith("move "):
+        debug_log("Classified as: os_reasoning", 'debug')
+        return "os_reasoning"
+
     # --- AGENTIC FALLBACK: Fuzzy Matching ---
     # This handles voice mistakes locally (e.g., "open no pad" -> "open notepad")
     # without asking Gemini.
@@ -339,12 +409,38 @@ def parse_time_string(text):
         if ampm == 'am' and h == 12: h = 0
     return datetime.time(h, m)
 
+def process_request(user_input, mode=None):
+    """
+    High-level entry point for processing requests with explicit mode awareness.
+    As recommended by the Senior AI Engineer prompt.
+    """
+    global current_mode
+    if mode:
+        current_mode = mode
+        
+    return process_command(user_input)
+
 def process_command(command):
     """
     Agentic Pipeline:
-    User -> Intent Filter -> Agent Brain -> Planner -> Validator -> Executor -> Memory
+    User -> Intent Filter -> NLP Mode Guard -> Agent Brain -> Planner -> Validator -> Executor -> Memory
     """
+    global current_mode
     
+    # --- 0. NLP Mode Guard & Switch Logic ---
+    if "switch to" in command.lower() and "mode" in command.lower():
+        new_mode = command.lower().replace("switch to", "").replace("mode", "").strip().upper().replace(" ", "_")
+        if new_mode:
+            current_mode = new_mode
+            return f"Switched to {current_mode.replace('_', ' ').title()}."
+
+    # Analyze intent using spaCy NLP
+    intent_tag, target_mode = intent_recognizer.extract_intent(command)
+    
+    # Validation Logic: Mode Awareness
+    if target_mode and target_mode != current_mode and current_mode != "GENERAL":
+        return f"I detected a {intent_tag.lower()} command, but I am in {current_mode.replace('_', ' ').title()}. Should I switch to {target_mode.replace('_', ' ').title()}?"
+
     # --- 1. Intent Filter (MiniLM / NeuralBrain / Regex) ---
     if command.lower() in ["exit", "quit", "stop", "bye"]:
         return "exit"
@@ -382,7 +478,23 @@ def process_command(command):
             
     debug_log(f"Intent classified as: {intent}", 'info')
 
+    # --- 2. Dispatch to Registered Handlers ---
+    if intent in INTENT_HANDLERS:
+        return INTENT_HANDLERS[intent](args)
+
     # --- 3. Planner, 4. Validator, 5. Executor ---
+
+    if intent == "os_reasoning":
+        if ask_permission(f"execute OS reasoning for '{command}'"):
+            speak("Scanning screen and thinking...")
+            ocr_data = vision.get_ocr_data()
+            commands_sequence = ask_jarvis_llm(command, ocr_data)
+            if commands_sequence:
+                success = execute_os_sequence(commands_sequence)
+                return "OS reasoning execution complete." if success else "OS reasoning encountered an error."
+            else:
+                return "Could not formulate an OS reasoning plan."
+        return "Permission denied."
 
     if intent == "add_task":
         task_desc = args.get("description")
