@@ -31,9 +31,9 @@ User Voice / Text Intent
                           │ parametric reasoning
                           ▼
 ┌────────────────────────────────────────────────────────┐
-│  Layer 3: Local Brain SLM (WSL Ollama)                 │
-│  • jarvis:latest (1.5B Qwen2.5-Coder specialized)      │
-│  • functiongemma:latest (268M function-calling engine) │
+│  Layer 3: Local Dual-SLM Brain (WSL Ollama)            │
+│  • Reasoning & Task Planning : smollm2:135m            │
+│  • Tool & Function Calling   : functiongemma:latest    │
 │  • Single-instance preloaded RAM residency             │
 └─────────────────────────┬──────────────────────────────┘
                           │ multi-step planning / web
@@ -90,7 +90,7 @@ Run the automated model provisioner to verify WSL Ollama and download required o
 ```
 This script automatically:
 * Connects to Ollama on `127.0.0.1:11434`
-* Verifies / pulls **`jarvis:latest`** (1.5B) & **`functiongemma:latest`** (268M)
+* Verifies / pulls **`smollm2:135m`** (Reasoning & Planning) & **`functiongemma:latest`** (Tool Calling)
 * Caches **`all-MiniLM-L6-v2`** for semantic intent matching
 * Downloads **`faster-whisper-tiny.en`** for local speech-to-text
 
@@ -103,7 +103,7 @@ Edit `.env`:
 ```ini
 # Primary Model Provider: 'ollama', 'google', 'groq', or 'deepseek'
 JARVIS_MODEL_PROVIDER=ollama
-JARVIS_MODEL=jarvis:latest
+JARVIS_MODEL=smollm2:135m
 
 # Optional Cloud API Keys
 GEMINI_API_KEY=your_key_here
@@ -111,7 +111,8 @@ GROQ_API_KEY=your_key_here
 
 # Local SLM & WSL Configuration
 JARVIS_OLLAMA_HOST=http://127.0.0.1:11434
-JARVIS_LOCAL_BRAIN_MODEL=jarvis:latest
+JARVIS_REASONING_MODEL=smollm2:135m
+JARVIS_LOCAL_BRAIN_MODEL=functiongemma:latest
 ```
 
 ---

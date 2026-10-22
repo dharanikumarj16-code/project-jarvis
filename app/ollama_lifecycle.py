@@ -26,6 +26,7 @@ logger = logging.getLogger("jarvis.ollama_lifecycle")
 
 DEFAULT_OLLAMA_HOST = getattr(config, "ollama_host", "http://127.0.0.1:11434")
 DEFAULT_MODEL = getattr(config, "local_brain_model", "functiongemma:latest")
+DEFAULT_REASONING_MODEL = getattr(config, "reasoning_model", "smollm2:135m")
 
 
 def is_ollama_reachable(host: str = DEFAULT_OLLAMA_HOST, timeout: float = 1.5) -> bool:

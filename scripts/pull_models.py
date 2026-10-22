@@ -4,7 +4,7 @@ scripts/pull_models.py - Model Provisioning & Cache Manager
 
 Autonomous model pulling and validation for JARVIS:
 1. Verifies connectivity to WSL / native Ollama service on 127.0.0.1:11434.
-2. Checks and pulls open-source SLMs: 'jarvis:latest' (1.5B) and 'functiongemma:latest' (268M).
+2. Checks and pulls open-source SLMs: 'smollm2:135m' (Reasoning) and 'functiongemma:latest' (Tool Calling).
 3. Preloads models into memory for low-latency inference.
 4. Downloads Faster-Whisper ASR models for offline voice recognition.
 """
@@ -21,7 +21,7 @@ import urllib.error
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 DEFAULT_HOST = "http://127.0.0.1:11434"
-DEFAULT_MODELS = ["jarvis:latest", "functiongemma:latest"]
+DEFAULT_MODELS = ["smollm2:135m", "functiongemma:latest"]
 
 CYAN = "\033[96m"
 GREEN = "\033[92m"

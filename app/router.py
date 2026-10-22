@@ -1250,6 +1250,20 @@ class IntelligentNLPRouter:
                     is_direct=False,
                     reason="Command string missing for terminal execution",
                 )
+            if canonical in ("close_app", "focus_window") and not args.get("app_name") and not args.get("title"):
+                return RoutingResult(
+                    intent=canonical,
+                    selected_tool=canonical,
+                    arguments={},
+                    confidence=0.85,
+                    needs_clarification=True,
+                    clarification_prompt="Which application or window would you like to target?",
+                    routing_layer="clarification",
+                    raw_input=raw,
+                    normalized_input=normalized,
+                    is_direct=False,
+                    reason="Target application or window missing",
+                )
 
             routing_layer = "exact" if is_exact else "normalized"
             confidence = 1.0 if is_exact else 0.95

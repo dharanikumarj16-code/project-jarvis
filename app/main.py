@@ -123,9 +123,12 @@ async def agent_loop():
 
     # Check / start Ollama & verify FunctionGemma model readiness
     from app.ollama_lifecycle import initialize_local_brain_lifecycle
-    brain_status = await initialize_local_brain_lifecycle(additional_models=["qwen2.5-coder:1.5b"])
+    brain_status = await initialize_local_brain_lifecycle(
+        model_name="functiongemma:latest",
+        additional_models=["smollm2:135m"]
+    )
     if brain_status.get("ollama_running") and brain_status.get("model_available"):
-        print(f"  {GREEN}✔{RESET} {BOLD}Local Brain SLM{RESET}: {DIM}model={brain_status['model_name']} ({brain_status['host']}) [Preloaded]{RESET}\n")
+        print(f"  {GREEN}✔{RESET} {BOLD}Local Brain SLM{RESET}: {DIM}Tool Calling=functiongemma:latest | Reasoning=smollm2:135m ({brain_status['host']}) [Preloaded]{RESET}\n")
     else:
         print(f"  {YELLOW}⚡{RESET} {BOLD}Fast-Path NLP{RESET}   : {DIM}Deterministic routing active (Ollama SLM offline){RESET}\n")
 

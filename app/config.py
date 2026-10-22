@@ -4,8 +4,8 @@ from typing import Optional
 class JarvisConfig:
     def __init__(self):
         # AI/Model
-        self.model_provider = os.getenv("JARVIS_MODEL_PROVIDER", "groq")
-        self.model_name = os.getenv("JARVIS_MODEL", "openai/gpt-oss-120b")
+        self.model_provider = os.getenv("JARVIS_MODEL_PROVIDER", "ollama")
+        self.model_name = os.getenv("JARVIS_MODEL", "smollm2:135m")
         
         # Voice
         self.voice_enabled = os.getenv("VOICE_ENABLED", "false").lower() == "true"
@@ -25,6 +25,7 @@ class JarvisConfig:
         self.local_brain_threads = int(os.getenv("JARVIS_LOCAL_BRAIN_THREADS", "4"))
         self.local_brain_gpu_layers = int(os.getenv("JARVIS_LOCAL_BRAIN_GPU_LAYERS", "0"))
         self.ollama_host = os.getenv("JARVIS_OLLAMA_HOST", "http://127.0.0.1:11434")
+        self.reasoning_model = os.getenv("JARVIS_REASONING_MODEL", "smollm2:135m")
         self.local_brain_model = os.getenv("JARVIS_LOCAL_BRAIN_MODEL", "functiongemma:latest")
         self.local_brain_enabled = os.getenv("JARVIS_LOCAL_BRAIN_ENABLED", "true").lower() in ("true", "1", "yes")
         self.local_brain_timeout = float(os.getenv("JARVIS_LOCAL_BRAIN_TIMEOUT", "15.0"))

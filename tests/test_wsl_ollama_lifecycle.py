@@ -35,25 +35,25 @@ def test_is_ollama_reachable_mocked_false():
 
 
 def test_list_installed_models_parser():
-    mock_payload = b'{"models": [{"name": "jarvis:latest"}, {"model": "functiongemma:latest"}]}'
+    mock_payload = b'{"models": [{"name": "smollm2:135m"}, {"model": "functiongemma:latest"}]}'
     with patch("urllib.request.urlopen") as mock_url:
         mock_resp = MagicMock()
         mock_resp.read.return_value = mock_payload
         mock_url.return_value.__enter__.return_value = mock_resp
         models = list_installed_models()
-        assert "jarvis:latest" in models
+        assert "smollm2:135m" in models
         assert "functiongemma:latest" in models
 
 
 def test_warmup_models_execution():
-    with patch("app.ollama_lifecycle.list_installed_models", return_value=["jarvis:latest", "functiongemma:latest"]), \
+    with patch("app.ollama_lifecycle.list_installed_models", return_value=["smollm2:135m", "functiongemma:latest"]), \
          patch("urllib.request.urlopen") as mock_url:
         mock_resp = MagicMock()
         mock_resp.status = 200
         mock_url.return_value.__enter__.return_value = mock_resp
-        res = warmup_models(["jarvis:latest", "functiongemma:latest"])
+        res = warmup_models(["smollm2:135m", "functiongemma:latest"])
         assert isinstance(res, dict)
-        assert res.get("jarvis:latest") is True
+        assert res.get("smollm2:135m") is True
 
 
 @pytest.mark.asyncio
