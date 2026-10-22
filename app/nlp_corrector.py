@@ -105,12 +105,20 @@ KNOWN_TYPOS: Dict[str, str] = {
     "broswer": "browser",
     "brower": "browser",
     "borwser": "browser",
+    "whstapp": "whatsapp",
+    "whatsap": "whatsapp",
+    "watsapp": "whatsapp",
+    "whtsapp": "whatsapp",
+    "meesage": "message",
+    "messege": "message",
+    "mesage": "message",
+    "sent": "send",
 }
 
 # Protected canonical token vocabulary for bounded Levenshtein correction
 CANONICAL_VOCABULARY = {
     "open", "close", "start", "launch", "exit", "quit", "create", "make",
-    "list", "show", "read", "write", "run", "exec", "check",
+    "list", "show", "read", "write", "run", "exec", "check", "send",
     "folder", "folders", "directory", "directories", "file", "files", "name", "rename", "change", "move", "copy",
     "delete", "recycle", "restore", "undo", "operation", "search", "find",
     "explorer", "terminal", "command", "click", "double", "right", "scroll",

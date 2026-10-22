@@ -140,6 +140,8 @@ VERB_TOOL_MAP: Dict[str, str] = {
     "exec":      "terminal_execute",
     "cmd":       "terminal_execute",
     "whatsapp":  "whatsapp_search_and_message",
+    "send":      "whatsapp_search_and_message",
+    "message":   "whatsapp_search_and_message",
     "play":      "play_music",
 }
 
@@ -413,6 +415,7 @@ def _resolve_pronouns(words: List[str], ctx: ExecutionContext) -> List[str]:
 
 def _extract_app_or_window(verb: str, rest: List[str], ctx: ExecutionContext) -> Dict[str, Any]:
     target = " ".join(rest).strip() if rest else (ctx.last_app_name or "")
+    target = re.sub(r"^(?:application|app|program|the\s+app|the\s+application)\s+", "", target, flags=re.IGNORECASE).strip()
     return {"app_name": target} if target else {}
 
 def _extract_text(verb: str, rest: List[str], ctx: ExecutionContext) -> Dict[str, Any]:
@@ -699,7 +702,13 @@ def _extract_search_files(verb: str, rest: List[str], ctx: ExecutionContext) -> 
 
 def _extract_whatsapp(verb: str, rest: List[str], ctx: ExecutionContext) -> Dict[str, Any]:
     text = " ".join(rest).strip()
-    text = re.sub(r"^(?:message|to|contact|search)\s+", "", text, flags=re.IGNORECASE).strip()
+    text = re.sub(r"^(?:message|contact|search)\s+", "", text, flags=re.IGNORECASE).strip()
+    m_to = re.match(r"^(.+?)\s+to\s+(.+)$", text, flags=re.IGNORECASE)
+    if m_to:
+        candidate_msg = m_to.group(1).strip()
+        candidate_contact = m_to.group(2).strip()
+        candidate_contact = re.sub(r"^(?:whatsapp\s+)?contact\s+", "", candidate_contact, flags=re.IGNORECASE).strip()
+        return {"contact": candidate_contact, "message": candidate_msg}
     m = re.split(r"\s+(?:message|msg|saying|text|and\s+say|and\s+send)\s+", text, maxsplit=1, flags=re.IGNORECASE)
     if len(m) == 2:
         return {"contact": m[0].strip(), "message": m[1].strip()}
@@ -834,6 +843,15 @@ def _extract_args(verb: str, tool_name: str, parts: List[str], ctx: ExecutionCon
 # ---------------------------------------------------------------------------
 def resolve_command_verb(parts: List[str]) -> Tuple[Optional[str], Optional[str], List[str]]:
     """Resolve verb and tool_name using multi-word phrase (up to 4 words) or single-word lookup."""
+    if not parts:
+        return None, None, parts
+
+    # Strip wake word and politeness prefixes
+    while parts and parts[0].lower() in ("jarvis", "hey", "hi", "hello", "please"):
+        parts = parts[1:]
+    if len(parts) >= 2 and parts[0].lower() == "can" and parts[1].lower() == "you":
+        parts = parts[2:]
+
     if not parts:
         return None, None, parts
 
@@ -1181,6 +1199,26 @@ class IntelligentNLPRouter:
         # -------------------------------------------------------------------
         normalized, masked, literals = self.corrector.normalize(raw)
         is_exact = (normalized.strip().lower() == raw.strip().lower())
+
+        # -------------------------------------------------------------------
+        # Conversational Greetings & Assistant Inquiries (Direct conversational return)
+        # -------------------------------------------------------------------
+        norm_clean = re.sub(r"[^\w\s]", "", normalized.lower()).strip()
+        if norm_clean in {
+            "hi", "hello", "hey", "jarvis", "hi jarvis", "hello jarvis", "hey jarvis",
+            "good morning", "good evening", "good afternoon", "how are you", "who are you",
+            "who made you", "what can you do", "help", "greetings",
+        }:
+            return RoutingResult(
+                intent="conversation",
+                selected_tool=None,
+                confidence=1.0,
+                is_direct=True,
+                routing_layer="conversation",
+                raw_input=raw,
+                normalized_input=normalized,
+                reason="Conversational greeting",
+            )
 
         # -------------------------------------------------------------------
         # LAYER 1 & 2: DETERMINISTIC DIRECT MATCH (Exact or Normalized)

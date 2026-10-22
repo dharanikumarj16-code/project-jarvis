@@ -230,6 +230,12 @@ class JarvisCore:
         ctx = ExecutionContext()
         steps = plan_user_input(user_input, ctx)
 
+        # ---- Conversational Greeting Fast Path ----
+        if steps and any(s.routing_result and s.routing_result.intent == "conversation" for s in steps):
+            greeting_resp = "Hello! I am JARVIS, your autonomous desktop assistant. How can I help you today?"
+            await event_bus.publish("SpeechStarted", {"text": greeting_resp})
+            return history, greeting_resp
+
         # ---- Layer 6: Clarification check ----
         clarification_steps = [s for s in steps if s.routing_result and s.routing_result.needs_clarification]
         if clarification_steps:
@@ -257,6 +263,26 @@ class JarvisCore:
             final_response = "\n".join(observations)
             await event_bus.publish("SpeechStarted", {"text": final_response})
             return history, final_response
+
+        # ---- Planning & Reasoning Path: SmolLM2-135M Task Decomposition ----
+        try:
+            from app.planner import plan_task_with_reasoning, execute_plan
+            plan = plan_task_with_reasoning(user_input, ctx)
+            if plan and len(plan.steps) > 1 and all(s.tool_name for s in plan.steps):
+                exec_plan = await execute_plan(plan, ctx, step_delay=1.0)
+                observations = []
+                for s in exec_plan.steps:
+                    obs_text = _format_clean_tool_output(
+                        s.tool_name,
+                        s.tool_args,
+                        {"success": s.status == "completed", "data": s.result, "error": s.error}
+                    )
+                    observations.append(obs_text)
+                final_response = "\n".join(observations)
+                await event_bus.publish("SpeechStarted", {"text": final_response})
+                return history, final_response
+        except Exception:
+            pass
 
         # ---- Intermediate path: Local Brain (FunctionGemma) tool selection ----
         import app.core as _self_module
