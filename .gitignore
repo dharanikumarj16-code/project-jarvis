@@ -1,0 +1,47 @@
+# Environment and secrets
+.env
+.env.local
+
+# Python virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python compiled bytecode & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+
+# Local model storage (do not commit binary weights to git)
+models/
+*.gguf
+*.bin
+*.onnx
+
+# Legacy & accidental folders
+jarvis/
+project-jarvis/
+my_ai_assistant/
+
+# Sandbox, temporary test directories & outputs
+sandbox/
+sandbox_test/
+test_sandbox/
+downloads/
+*.log
+*output.txt
+@AutomationLog.txt
+test_report*.json
+whatsapp_tree.json
+screen_capture.jpg
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.suo
+*.user
+*.ntvs*
+*.njsproj

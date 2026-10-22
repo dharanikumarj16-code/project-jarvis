@@ -1,0 +1,74 @@
+# ==============================================================================
+# JARVIS PC-Expert SLM - SFT Training Configuration
+# Base Model: google/functiongemma-270m-it
+# Target: Windows PC Automation Intelligence (Layer 3 Local Brain)
+# ==============================================================================
+
+model:
+  base_model_name_or_path: "google/functiongemma-270m-it"
+  torch_dtype: "bfloat16"
+  max_seq_length: 2048
+  trust_remote_code: true
+  use_cache: false
+
+peft:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  task_type: "CAUSAL_LM"
+
+training:
+  output_dir: "models/functiongemma-270m-jarvis-sft"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0002
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  logging_steps: 10
+  eval_strategy: "steps"
+  eval_steps: 50
+  save_strategy: "steps"
+  save_steps: 50
+  save_total_limit: 2
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  bf16: true
+  fp16: false
+  gradient_checkpointing: true
+  optim: "adamw_torch"
+  seed: 42
+
+loss_masking:
+  # Completion-only loss masking is critical for FunctionGemma 270M:
+  # Never compute loss on system prompt, tool schemas, or user queries.
+  # Compute loss solely on model response/tool-call tokens.
+  response_template: "<start_of_turn>model\n"
+  instruction_template: "<start_of_turn>user\n"
+
+data:
+  train_path: "os_intelligence/data/train.jsonl"
+  val_path: "os_intelligence/data/val.jsonl"
+  test_path: "os_intelligence/data/test.jsonl"
+  max_tools_per_turn: 10
+
+smoke_test:
+  device: "cpu"
+  torch_dtype: "float32"
+  max_steps: 5
+  batch_size: 1
+  gradient_accumulation_steps: 1
+  bf16: false
+  fp16: false

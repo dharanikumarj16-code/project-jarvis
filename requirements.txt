@@ -1,0 +1,23 @@
+pydantic-ai==2.53.0
+litellm
+mcp[cli]
+python-dotenv
+psutil
+paddleocr
+paddlepaddle
+opencv-python
+pyautogui
+pywinauto
+uiautomation
+ollama
+duckduckgo_search
+# Voice pipeline
+faster-whisper>=1.0.0
+pyaudio
+numpy
+silero-vad
+onnxruntime
+sounddevice
+# Layer 2 & 3: Fast-NLP Semantic Router & Local Brain SLM
+fastembed>=0.9.0
+llama-cpp-python>=0.3.0

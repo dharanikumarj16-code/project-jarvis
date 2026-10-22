@@ -1,0 +1,13 @@
+[project]
+name = "jarvis"
+version = "0.1.0"
+description = "JARVIS V0.1 Voice Assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic-ai",
+    "litellm",
+    "mcp[cli]",
+    "python-dotenv",
+    "psutil",
+]
